@@ -1,9 +1,12 @@
 package com.spring.ioc.demo.bean;
 
+import java.io.Serializable;
+
 /**
  * 定义一个用户对象bean
  */
-public class User {
+public class User implements Serializable {
+    private static final long serialVersionUID = 2326150446923112363L;
     private String userName;
     private Integer age;
 
