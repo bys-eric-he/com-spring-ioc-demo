@@ -24,18 +24,23 @@ public class ComSpringIocDemoApplication {
             // 从类路径下的一个或多个xml配置文件中加载上下文定义，适用于xml配置的方式。
             AbstractApplicationContext applicationContext1 = new ClassPathXmlApplicationContext("beans.xml");
             // 根据bean id获取bean对象
-            User bean = (User) applicationContext1.getBean("user");
-            System.out.println(JSON.toJSONString(bean));
+            User user = (User) applicationContext1.getBean("user");
+            System.out.println(JSON.toJSONString(user));
 
             // 使用AnnotationConfigApplicationContext获取spring容器ApplicationContext2
             // 从一个或多个基于java的配置类中加载上下文定义，适用于java注解的方式。
             AbstractApplicationContext applicationContext2 = new AnnotationConfigApplicationContext(UserBeanConfig.class);
-            User bean2 = applicationContext2.getBean(User.class);
+            User user2 = applicationContext2.getBean(User.class);
 
-            System.out.println(JSON.toJSONString(bean2));
+            System.out.println(JSON.toJSONString(user2));
 
+            User user3 = applicationContext2.getBean(User.class);
 
-            SerializationUtils.SerializeObject(bean2);
+            System.out.println("user is equals to user2 ? " + user.equals(user2));
+
+            System.out.println("user2 is equals to user3 ? " + user2.equals(user3));
+
+            SerializationUtils.SerializeObject(user2);
 
             String[] namesForType = applicationContext2.getBeanNamesForType(User.class);
             for (String name : namesForType) {
@@ -56,9 +61,9 @@ public class ComSpringIocDemoApplication {
             // applicationContext.close()关闭容器。
             // applicationContext2.close();
 
-            User user = SerializationUtils.DeserializeObject();
+            User deserializeUser = SerializationUtils.DeserializeObject();
 
-            System.out.println(JSON.toJSONString(user));
+            System.out.println(JSON.toJSONString(deserializeUser));
         } catch (Exception exception) {
             System.out.println("##########服务启动异常#########");
             exception.printStackTrace();

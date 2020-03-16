@@ -41,4 +41,32 @@ public class User implements Serializable {
     public void destroyUser() {
         System.out.println("bean销毁之后执行!");
     }
+
+    /**
+     * 覆盖equals方法
+     *
+     * @param obj
+     * @return
+     */
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        User user = (User) obj;
+        if (!age.equals(user.age)) {
+            return false;
+        }
+        if (userName == null) {
+            return user.userName == null;
+        } else {
+            return userName.equals(user.userName);
+        }
+    }
 }
