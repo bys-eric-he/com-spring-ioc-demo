@@ -33,7 +33,8 @@ public class ServiceBeanProxy<T> implements InvocationHandler {
     @Override
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
         SpringTrackUtils.printTrack("********在这里可以实现一些特定的业务逻辑！*********");
-        System.out.println("----------invoke调用前--------->");
+        System.out.println("----------invoke调用前--------->\n" + proxy.getClass().getName());
+        proxy.getClass().getName();
         System.out.println(method.getName() + "->" + JSON.toJSONString(args));
         Object result = new Object();
 

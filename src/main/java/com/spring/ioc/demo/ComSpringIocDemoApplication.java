@@ -5,13 +5,19 @@ import com.spring.ioc.demo.aware.CustomizeBeanFactoryAware;
 import com.spring.ioc.demo.aware.SpringApplicationContextAware;
 import com.spring.ioc.demo.bean.User;
 import com.spring.ioc.demo.config.UserBeanConfig;
+import com.spring.ioc.demo.proxy.StudentServiceProxy;
 import com.spring.ioc.demo.service.CalculateService;
+import com.spring.ioc.demo.service.StudentService;
+import com.spring.ioc.demo.service.impl.StudentServiceImpl;
 import com.spring.ioc.demo.util.SerializationUtils;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
+
+import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.Proxy;
 
 @SpringBootApplication
 public class ComSpringIocDemoApplication {
@@ -64,6 +70,24 @@ public class ComSpringIocDemoApplication {
             User deserializeUser = SerializationUtils.DeserializeObject();
 
             System.out.println(JSON.toJSONString(deserializeUser));
+
+            //FactoryBean生成的实例
+            System.out.println("--------FactoryBean生成的实例-----------");
+            System.out.println(SpringApplicationContextAware.getBean("studentFactoryBean"));
+            System.out.println(SpringApplicationContextAware.getBean("&studentFactoryBean"));
+
+
+
+            StudentService studentService=new StudentServiceImpl();
+            InvocationHandler studentServiceProxy=new StudentServiceProxy(studentService);
+            StudentService studentServiceProxyInstance= (StudentService) Proxy.newProxyInstance(studentService.getClass().getClassLoader(), studentService.getClass().getInterfaces(), studentServiceProxy);
+            //参数一：proxyInstance类的类加载器
+            //参数二：proxyInstance实现的所有接口
+            //参数三：实现了invocationHandler接口的对象
+
+            studentServiceProxyInstance.buy();
+            studentServiceProxyInstance.talk();
+
         } catch (Exception exception) {
             System.out.println("##########服务启动异常#########");
             exception.printStackTrace();
