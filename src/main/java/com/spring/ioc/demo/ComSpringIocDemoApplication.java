@@ -3,7 +3,11 @@ package com.spring.ioc.demo;
 import com.alibaba.fastjson.JSON;
 import com.spring.ioc.demo.aware.CustomizeBeanFactoryAware;
 import com.spring.ioc.demo.aware.SpringApplicationContextAware;
+import com.spring.ioc.demo.bean.Car;
+import com.spring.ioc.demo.bean.School;
+import com.spring.ioc.demo.bean.Student;
 import com.spring.ioc.demo.bean.User;
+import com.spring.ioc.demo.config.PojoFactoryBeanConfig;
 import com.spring.ioc.demo.config.UserBeanConfig;
 import com.spring.ioc.demo.proxy.StudentServiceProxy;
 import com.spring.ioc.demo.service.CalculateService;
@@ -33,17 +37,27 @@ public class ComSpringIocDemoApplication {
             User user = (User) applicationContext1.getBean("user");
             System.out.println(JSON.toJSONString(user));
 
+            Car car = (Car) applicationContext1.getBean("carFactoryBean");
+            System.out.println(car.toString());
+
+             StudentService studentService = (StudentService) applicationContext1.getBean("studentServiceFactoryBean");
+             System.out.println(studentService.talk());
+
+            Object studentObject = applicationContext1.getBean("pojoFactoryBean");
+            if (studentObject instanceof Student) {
+                Student student = (Student) studentObject;
+                System.out.println(student.toString());
+            }
+
             // 使用AnnotationConfigApplicationContext获取spring容器ApplicationContext2
             // 从一个或多个基于java的配置类中加载上下文定义，适用于java注解的方式。
-            AbstractApplicationContext applicationContext2 = new AnnotationConfigApplicationContext(UserBeanConfig.class);
+            AbstractApplicationContext applicationContext2 = new AnnotationConfigApplicationContext(UserBeanConfig.class, PojoFactoryBeanConfig.class);
             User user2 = applicationContext2.getBean(User.class);
-
             System.out.println(JSON.toJSONString(user2));
 
             User user3 = applicationContext2.getBean(User.class);
 
             System.out.println("user is equals to user2 ? " + user.equals(user2));
-
             System.out.println("user2 is equals to user3 ? " + user2.equals(user3));
 
             SerializationUtils.SerializeObject(user2);
@@ -53,9 +67,19 @@ public class ComSpringIocDemoApplication {
                 System.out.println("applicationContext2上下文中 bean名称为->" + name);
             }
 
-            CalculateService calculateService = (CalculateService) SpringApplicationContextAware.getBean("calculateService-bean");
-            System.out.println("1+1=" + calculateService.add(1, 1));
-            System.out.println(calculateService.getServiceDesc());
+            Object schoolObject = applicationContext2.getBean("pojo-factory-bean");
+            if (schoolObject instanceof School) {
+                School school = (School) schoolObject;
+                System.out.println(school.toString());
+            }
+
+            try {
+                CalculateService calculateService = (CalculateService) SpringApplicationContextAware.getBean("calculateService-bean");
+                System.out.println("1+1=" + calculateService.add(1, 1));
+                System.out.println(calculateService.getServiceDesc());
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
 
             CalculateService calculateServiceBean = (CalculateService) CustomizeBeanFactoryAware.getBean("calculateService-bean");
             System.out.println("8+8=" + calculateServiceBean.add(8, 8));
@@ -77,10 +101,9 @@ public class ComSpringIocDemoApplication {
             System.out.println(SpringApplicationContextAware.getBean("&studentFactoryBean"));
 
 
-
-            StudentService studentService=new StudentServiceImpl();
-            InvocationHandler studentServiceProxy=new StudentServiceProxy(studentService);
-            StudentService studentServiceProxyInstance= (StudentService) Proxy.newProxyInstance(studentService.getClass().getClassLoader(), studentService.getClass().getInterfaces(), studentServiceProxy);
+            StudentService studentServiceObject = new StudentServiceImpl();
+            InvocationHandler studentServiceProxy = new StudentServiceProxy(studentServiceObject);
+            StudentService studentServiceProxyInstance = (StudentService) Proxy.newProxyInstance(studentServiceObject.getClass().getClassLoader(), studentServiceObject.getClass().getInterfaces(), studentServiceProxy);
             //参数一：proxyInstance类的类加载器
             //参数二：proxyInstance实现的所有接口
             //参数三：实现了invocationHandler接口的对象

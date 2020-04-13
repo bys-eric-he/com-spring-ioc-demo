@@ -4,7 +4,28 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
     <!-- 定义一个id为user的bean对象 -->
     <bean id="user" class="com.spring.ioc.demo.bean.User" init-method="initUser" destroy-method="destroyUser">
-        <property name="age" value="26"></property>
-        <property name="userName" value="eric.he"></property>
+        <property name="age" value="26"/>
+        <property name="userName" value="eric.he"/>
     </bean>
+    <bean id="car" class="com.spring.ioc.demo.bean.Car">
+        <property name="brand" value="宝马"/>
+        <property name="maxSpeed" value="500"/>
+        <property name="price" value="800000"/>
+    </bean>
+
+    <bean id="studentService" class="com.spring.ioc.demo.service.impl.StudentServiceImpl"/>
+
+    <bean id="studentServiceFactoryBean" class="com.spring.ioc.demo.factory.ProxyFactoryBean">
+        <property name="interfaceName" value="com.spring.ioc.demo.service.StudentService"/>
+        <property name="target" ref="studentService"/>
+    </bean>
+
+    <bean id="carFactoryBean" class="com.spring.ioc.demo.factory.CarFactoryBean">
+        <property name="carInfo" value="宝时捷,800,3800000"/>
+    </bean>
+
+    <bean id="pojoFactoryBean" class="com.spring.ioc.demo.factory.PojoFactoryBean">
+        <property name="type" value="student"/>
+    </bean>
+
 </beans>
